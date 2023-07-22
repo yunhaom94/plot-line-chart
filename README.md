@@ -12,6 +12,7 @@ In put csv is sample.csv that follows a few rules
 6. Different styles of defining style is shown in sample.csv
 7. Leading and trailing space is removed
 
+A few prints using the sample.csv, change xlim ylim if needed
      x  series 1    x   series 2   x.1  series 3
 0  1.0         4  1.1          3   1.2         5
 1  2.0         4  2.1          4   2.2         7

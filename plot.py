@@ -30,8 +30,8 @@ def plot_line_segments(csv_file):
     # there are more to the loc, placing it outside the chat is more complex
     plt.legend(loc='best')
     plt.grid(True)
-    plt.gca().set_xlim(0, 6)
-    plt.gca().set_ylim(0, 10)
+    #plt.gca().set_xlim(0, 6)
+    #plt.gca().set_ylim(0, 10)
     plt.show()
 
 
