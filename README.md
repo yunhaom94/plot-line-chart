@@ -4,12 +4,12 @@ Basically we are expecting a csv that pass in series that needs to be plotted.
 
 In put csv is sample.csv that follows a few rules
 ```
-1. data comes in pairs, one col of x, one col of y
-2. data can be in any length
-3, padding from shorter series must be ,, aka NaN
-4. y col name (i.e. series 1) will be legend name
-5. follow my the y col is styles, linestyle, marker and color
-6. Different styles of defining style is there
+1. Data comes in pairs, one col of x, one col of y
+2. Data can be in any length
+3, Padding from shorter series must be ,, aka NaN
+4. Y col name (i.e. series 1) will be legend name
+5. Three entries followed by the y col are styles, linestyle, marker and color
+6. Different styles of defining style is shown in sample.csv
 7. Leading and trailing space is removed
 
      x  series 1    x   series 2   x.1  series 3
