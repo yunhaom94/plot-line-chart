@@ -41,3 +41,46 @@ Y:
 Style:
 ['dotted', '4', 'blue']
 ```
+
+# plot-grouped-bar-chart
+
+Basically we are expecting a csv with trailing optional style
+Note that all series shares the same x as x is not numeric
+
+```
+Rules:
+1. Attribute so far is just color for bar charts
+2. Hardcoded group width is 1, so more series, each one will get thinner
+3. Expect all series as values
+4. If X dim == Y dim then no style, otherwise last entry is style
+5. Trailing x space for color setting mus tbe NaN which is ,, in csv
+
+Sample:
+
+  x_str  series 1  series 2  series 3
+0    Q1         4       1.1         3
+1    Q2         4       2.1         4
+2    Q3         5       3.1         6
+3    Q4         8       4.1         4
+4   NaN       red      blue     green
+0.25
+X:
+['Q1', 'Q2', 'Q3', 'Q4']
+Y:
+[4.0, 4.0, 5.0, 8.0]
+Style:
+['red']
+X:
+['Q1', 'Q2', 'Q3', 'Q4']
+Y:
+[1.1, 2.1, 3.1, 4.1]
+Style:
+['blue']
+X:
+['Q1', 'Q2', 'Q3', 'Q4']
+Y:
+[3.0, 4.0, 6.0, 4.0]
+Style:
+['green']
+
+```
