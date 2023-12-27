@@ -14,22 +14,27 @@ def plot_line_segments(csv_file, fig_file_name):
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('Line Segment Chart')
-    for i in range(0, len(df.columns), 2):
+    for i in range(0, len(df.columns), 3):
         series_x = df.columns[i]
         series_y = df.columns[i+1]
+        series_error = df.columns[i+2]
         style = df[series_y].dropna().iloc[-3:].tolist()
         x_cords = df[series_x].dropna().tolist()
         y_cords = df[series_y].dropna().iloc[:-3].tolist()
+        error_values = df[series_error].dropna().tolist()
         x_cords = list(map(float, x_cords))
         y_cords = list(map(float, y_cords))
+        error = list(map(float, error_values))
         has_style = 1
         if len(y_cords) != len(x_cords):
             y_cords = df[series_y].dropna().tolist()
             has_style = 0
         print("X:")
-        print(shi)
+        print(x_cords)
         print("Y:")
         print(y_cords)
+        print("Error:")
+        print(error)
         if has_style:
             print("Style:")
             print(style)
@@ -37,6 +42,9 @@ def plot_line_segments(csv_file, fig_file_name):
             plt.plot(x_cords, y_cords, label=series_y, linestyle=style[0], marker=style[1], color=style[2])
         else:
             plt.plot(x_cords, y_cords, label=series_y)
+        
+        # add error bars
+        plt.errorbar(x_cords, y_cords, yerr=error)
 
     # there are more to the loc, placing it outside the chat is more complex
     plt.legend(loc='best')
