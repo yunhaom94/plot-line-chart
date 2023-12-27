@@ -27,7 +27,7 @@ def plot_line_segments(csv_file, fig_file_name):
             y_cords = df[series_y].dropna().tolist()
             has_style = 0
         print("X:")
-        print(x_cords)
+        print(shi)
         print("Y:")
         print(y_cords)
         if has_style:

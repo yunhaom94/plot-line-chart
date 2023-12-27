@@ -2,6 +2,8 @@ import os
 import sys
 import csv
 
+import numpy as np
+
 def get_files(folder_paths : list, whitelist : list = []) -> list:
     ''' Get all the files in the folder '''
     result = []
@@ -13,6 +15,28 @@ def get_files(folder_paths : list, whitelist : list = []) -> list:
                 result.append(folder_path + file_name)
 
     return result
+
+def output_csv(parsed_result : dict, file_name):
+    ''' Output the parsed result to a csv file '''
+    # convert into csv
+    max_length = max(len(lst) for lst in parsed_result.values())
+
+    # Create a list of lists to represent the rows in the CSV file
+    rows = []
+
+    # Append header row
+    header = list(parsed_result.keys())
+    rows.append(header)
+
+    # Append data rows
+    for i in range(max_length):
+        row = [parsed_result[key][i] if i < len(parsed_result[key]) else '' for key in header]
+        rows.append(row)
+
+    # Write to CSV file
+    with open(os.path.join(file_name), "w", newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerows(rows)
 
 
 def parse_tp_avg_lt(list_of_files : list):
@@ -67,25 +91,35 @@ def parse_tp_avg_lt(list_of_files : list):
         parsed_result[key] = lts
         i += 1
     
-    # convert into csv
-    max_length = max(len(lst) for lst in parsed_result.values())
+    # output_csv(parsed_result)
+        
+    avg_results = {}
+    last_tps_std = [] 
+    
+    for key, value in parsed_result.items():
+        means = []
+        stds = []
+        
+        for i in range(0, len(value), 5):
+            means.append(sum(value[i:i+5])/5)
+            stds.append(np.std(value[i:i+5]))
 
-    # Create a list of lists to represent the rows in the CSV file
-    rows = []
+        if key.startswith("x"): # at throughput column
+            last_tps_std = stds
+            avg_results[key] = means
+        else:
+            avg_results[key] = means
+            avg_results[key + "-ltstd"] = stds
 
-    # Append header row
-    header = list(parsed_result.keys())
-    rows.append(header)
 
-    # Append data rows
-    for i in range(max_length):
-        row = [parsed_result[key][i] if i < len(parsed_result[key]) else '' for key in header]
-        rows.append(row)
+    output_csv(avg_results, "avg_results.csv")
+            
 
-    # Write to CSV file
-    with open(os.path.join("parsed.csv"), "w", newline='') as csv_file:
-        csv_writer = csv.writer(csv_file)
-        csv_writer.writerows(rows)
+
+        
+                
+            
+
 
 
 folder_paths = ["./results/pnc-n4-b500-repeat5/"]
