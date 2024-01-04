@@ -133,7 +133,7 @@ def parse_tp_avg_lt(list_of_files : list, repeat = 5):
 
 
 folder_paths = ["./results/orset/orset-n4-b1000-repeat5/"]
-whitelist = ["orset-n4-5050RW-0.5.txt"]
+whitelist = ["orset-n4-5050RW-1.txt"]
 
 if __name__ == "__main__":
     list_of_files = get_files(folder_paths, whitelist)
