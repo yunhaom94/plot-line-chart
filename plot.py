@@ -35,7 +35,6 @@ def plot_line_segments(csv_file, fig_file_name):
         print(y_cords)
         print("Error:")
         print(error)
-
         
 
         if has_style:
@@ -48,7 +47,7 @@ def plot_line_segments(csv_file, fig_file_name):
             plt.plot(x_cords, y_cords, label=series_y)
             plt.errorbar(x_cords, y_cords, yerr=error)
         
-        # add error bars
+        # set aspect ratio
 
         
 
@@ -58,7 +57,7 @@ def plot_line_segments(csv_file, fig_file_name):
     #plt.gca().set_xlim(0, 6)
     #plt.gca().set_ylim(0, 10)
     #plt.show()
-    plt.savefig(fig_file_name)
+    plt.savefig(fig_file_name, dpi=300)
 
 if __name__ == "__main__":
     # read arg 1 as csv file name if arg 2 is not given use the input as the save file name (change extension to .png)

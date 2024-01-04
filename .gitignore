@@ -1,5 +1,4 @@
 results/
-parsed.csv
-output.png
-avg_results.csv
+*.csv
+*.png
 .vscode

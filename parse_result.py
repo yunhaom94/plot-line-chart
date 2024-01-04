@@ -10,7 +10,7 @@ def get_files(folder_paths : list, whitelist : list = []) -> list:
     for folder_path in folder_paths:
         for file_name in os.listdir(folder_path):
             if file_name.endswith(".txt"):
-                if len(whitelist) == 0 and file_name in whitelist:
+                if len(whitelist) != 0 and file_name not in whitelist:
                     continue
                 result.append(folder_path + file_name)
 
@@ -39,7 +39,7 @@ def output_csv(parsed_result : dict, file_name):
         csv_writer.writerows(rows)
 
 
-def parse_tp_avg_lt(list_of_files : list):
+def parse_tp_avg_lt(list_of_files : list, repeat = 5):
     ''' Parse the throughput and average latency from the result files in the folder
      and output to a csv file '''
     result = {}
@@ -52,29 +52,38 @@ def parse_tp_avg_lt(list_of_files : list):
             with open(file_path, 'r') as f:
                 data = []
                 lines = f.readlines()
-                latency, throughput = -1, -1
+                newrun = False
+                first_line = True
                 for line in lines:
-                    if line.startswith("Average latency:") and latency == -1:
-                        if latency != -1 and throughput != -1:
-                            raise Exception("Error: latency is found twice")
+                    if line.startswith("Benchmark Results:"):
+                        # new run
+                        if newrun:
+                            raise Exception("Error: new run before previous run is finished")
 
+                        if not first_line:
+                            data.append((throughput, latency))
+                            print(f"throughput: {throughput}, latency: {latency}, latency_std: {latency_std}")
+                            i += 1
+                            if i % repeat == 0:
+                                print("---")
+                                
+                        else:
+                            first_line = False
+
+                        newrun = True
+                    elif line.startswith("Average latency:") and newrun:                        
                         latency = line.split(';')[0].split(':')[1].strip("ms").strip()
                         latency = float(latency)
-                    elif line.startswith("Throughput:"):
-                        if throughput != -1:
-                            raise Exception("Error: throughput is found twice")
-
+                        latency_std = line.split('Stdv latency:')[1].strip("ms").strip()
+                    elif line.startswith("Throughput:") and newrun:
                         throughput = line.split(':')[1].split(' ')[1].strip()
                         throughput = float(throughput)
-
-                    if latency != -1 and throughput != -1:
-                        data.append((throughput, latency))
-                        latency, throughput = -1, -1
-                    elif latency == -1 and throughput != -1:
-                        raise Exception("Error: latency is not found")
+                        newrun = False
+                
+                data.append((throughput, latency))
+                print(f"throughput: {throughput}, latency: {latency}, latency_std: {latency_std}")
                     
-                # sort data by first item
-                data.sort(key=lambda x: x[0])
+
                 result[file_name] = data
                 
 
@@ -100,9 +109,9 @@ def parse_tp_avg_lt(list_of_files : list):
         means = []
         stds = []
         
-        for i in range(0, len(value), 5):
-            means.append(sum(value[i:i+5])/5)
-            stds.append(np.std(value[i:i+5]))
+        for i in range(0, len(value), repeat):
+            means.append(sum(value[i:i+repeat])/repeat)
+            stds.append(np.std(value[i:i+repeat]))
 
         if key.startswith("x"): # at throughput column
             last_tps_std = stds
@@ -111,8 +120,9 @@ def parse_tp_avg_lt(list_of_files : list):
             avg_results[key] = means
             avg_results[key + "-ltstd"] = stds
 
+    return avg_results
 
-    output_csv(avg_results, "avg_results.csv")
+    
             
 
 
@@ -122,10 +132,12 @@ def parse_tp_avg_lt(list_of_files : list):
 
 
 
-folder_paths = ["./results/pnc-n4-b500-repeat5/"]
+folder_paths = ["./results/orset/orset-n4-b500-repeat5/"]
+whitelist = ["orset-n4-5050RW-0.5.txt"]
 
 if __name__ == "__main__":
-    list_of_files = get_files(folder_paths)
-    parse_tp_avg_lt(list_of_files)
+    list_of_files = get_files(folder_paths, whitelist)
+    result_dict = parse_tp_avg_lt(list_of_files, 5)
+    output_csv(result_dict, "result.csv")
 
     
