@@ -13,7 +13,7 @@ def plot_line_segments(csv_file, fig_file_name):
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('Bar Segment Chart')
-    group_width = 1 # change this will change the overall fatness of the group chart
+    group_width = 0.7 # change this will change the overall fatness of the group chart
     first_col = df[df.columns[0]].dropna()
     x = np.arange(len(first_col))
     width = group_width / len(first_col)
@@ -32,6 +32,7 @@ def plot_line_segments(csv_file, fig_file_name):
         # odd column are y values
         if (i % 2 == 1):
             print("y:" + series_y)
+            label = series_y
             style = df[series_y].dropna().iloc[-2:].tolist()
             y_cords = df[series_y].dropna().iloc[:-2].tolist()
             y_cords = list(map(float, y_cords))
@@ -56,10 +57,10 @@ def plot_line_segments(csv_file, fig_file_name):
                 print(style)
 
             if has_style:
-                plt.bar(x - width + width * (i/2), y_cords, width, label=series_y, hatch=style[0], edgecolor=style[1],  fill=False)
-                plt.errorbar(x - width + width * (i/2), y_cords, yerr=error, color=style[1], ls='none', capsize=2)
+                plt.bar(x - width * 2 + width * (i/2), y_cords, width, label=label, hatch=style[0], edgecolor=style[1],  fill=False)
+                plt.errorbar(x - width * 2 + width * (i/2), y_cords, yerr=error, color=style[1], ls='none', capsize=2)
             else:
-                plt.bar(x - width + width * i, y_cords, width, label=series_y)
+                plt.bar(x - width * 2 + width * (i/2), y_cords, width, label=label)
 
         i += 1
 
@@ -70,7 +71,7 @@ def plot_line_segments(csv_file, fig_file_name):
     #plt.gca().set_xlim(0, 6)
     #plt.gca().set_ylim(0, 10)
     #plt.show()
-    plt.savefig(fig_file_name)
+    plt.savefig(fig_file_name, dpi=300)
 
 if __name__ == "__main__":
     # read arg 1 as csv file name if arg 2 is not given use the input as the save file name (change extension to .png)

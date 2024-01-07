@@ -124,20 +124,74 @@ def parse_tp_avg_lt(list_of_files : list, repeat = 5):
 
     
             
+def parse_max_tp(list_of_files : list, repeat = 5):
+    avg_results = {}
+    data = []
 
+    i = 0
+    # read every file in the folder
+    for file_path in list_of_files:
+        file_name = os.path.basename(file_path).split('.txt')[0]
+        print("parsing " + file_path)
+        result = []
+        with open(file_path, 'r') as f:
+            data = []
+            lines = f.readlines()
+            newrun = False
+            first_line = True
+            for line in lines:
+                if line.startswith("Benchmark Results:"):
+                    # new run
+                    if newrun:
+                        raise Exception("Error: new run before previous run is finished")
 
+                    if not first_line:
+                        data.append((throughput, latency))
+                        print(f"throughput: {throughput}, latency: {latency}, latency_std: {latency_std}")
+                        i += 1
+                        if i % repeat == 0:
+                            print("---")
+                            
+                    else:
+                        first_line = False
+
+                    newrun = True
+                elif line.startswith("Average latency:") and newrun:                        
+                    latency = line.split(';')[0].split(':')[1].strip("ms").strip()
+                    latency = float(latency)
+                    latency_std = line.split('Stdv latency:')[1].strip("ms").strip()
+                elif line.startswith("Throughput:") and newrun:
+                    throughput = line.split(':')[1].split(' ')[1].strip()
+                    throughput = float(throughput)
+                    newrun = False
+            
+            data.append((throughput, latency))
+            print(f"throughput: {throughput}, latency: {latency}, latency_std: {latency_std}")
+                
+        for i in range(0, len(data), repeat):
+            avg_tp = np.mean([x[0] for x in data[i:i+repeat]])
+            std_tp = np.std([x[0] for x in data[i:i+repeat]])
+            avg_lt = np.mean([x[1] for x in data[i:i+repeat]])
+            result.append((avg_tp, std_tp, avg_lt))
+
+        # sort the result
+        result.sort(key=lambda x: x[0], reverse=True)
+        # all throughputs 
+        avg_results[file_name] = [x[0] for x in result]
+        # all stds
+        avg_results[file_name + "-std"] = [x[1] for x in result]
+        avg_results[file_name + "-lt"] = [x[2] for x in result]
+                
+    return avg_results
         
                 
-            
 
-
-
-folder_paths = ["./results/orset/orset-n4-nodag-repeat5/"]
-whitelist = ["orset-n4-5050RW-0.txt"]
+folder_paths = ["./results/pnc/pnc-n4-b500-repeat5/"]
+whitelist = ["pnc-n4-7030RW-0.5.txt"]
 
 if __name__ == "__main__":
     list_of_files = get_files(folder_paths, whitelist)
-    result_dict = parse_tp_avg_lt(list_of_files, 5)
+    result_dict = parse_max_tp(list_of_files, 5)
     output_csv(result_dict, "result.csv")
 
     
