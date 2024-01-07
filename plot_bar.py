@@ -18,32 +18,48 @@ def plot_line_segments(csv_file, fig_file_name):
     x = np.arange(len(first_col))
     width = group_width / len(first_col)
     print(width)
-    i = 0
+    i = 1
+
+    series_x = df.columns[0]
+    x_labels = df[series_x].dropna().tolist()
     for series_y in df.columns:
+        print(i)
+        
         if series_y == df.columns[0]:
             continue
         # all y shares the same x axis str entries
-        series_x = df.columns[0]
-        style = df[series_y].dropna().iloc[-1:].tolist()
-        x_labels = df[series_x].dropna().tolist()
-        y_cords = df[series_y].dropna().iloc[:-1].tolist()
-        y_cords = list(map(float, y_cords))
-        has_style = 1
-        if len(y_cords) != len(x_labels):
-            y_cords = df[series_y].dropna().tolist()
-            has_style = 0
-        print("X:")
-        print(x_labels)
-        print("Y:")
-        print(y_cords)
-        if has_style:
-            print("Style:")
-            print(style)
+        
+        # odd column are y values
+        if (i % 2 == 1):
+            print("y:" + series_y)
+            style = df[series_y].dropna().iloc[-2:].tolist()
+            y_cords = df[series_y].dropna().iloc[:-2].tolist()
+            y_cords = list(map(float, y_cords))
+            
+            has_style = 1
+            if len(y_cords) != len(x_labels):
+                y_cords = df[series_y].dropna().tolist()
+                has_style = 0
 
-        if has_style:
-            plt.bar(x - width + width * i, y_cords, width, label=series_y, color=style[0])
-        else:
-            plt.bar(x - width + width * i, y_cords, width, label=series_y)
+        # even column are error values, and draw the bar when it is even    
+        elif (i % 2 == 0):
+            print("err:" + series_y)
+            error = df[series_y].dropna().tolist()
+            error = list(map(float, error))
+
+            print("X:")
+            print(x_labels)
+            print("Y:")
+            print(y_cords)
+            if has_style:
+                print("Style:")
+                print(style)
+
+            if has_style:
+                plt.bar(x - width + width * (i/2), y_cords, width, label=series_y, hatch=style[0], edgecolor=style[1],  fill=False)
+                plt.errorbar(x - width + width * (i/2), y_cords, yerr=error, color=style[1], ls='none', capsize=2)
+            else:
+                plt.bar(x - width + width * i, y_cords, width, label=series_y)
 
         i += 1
 
