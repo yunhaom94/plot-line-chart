@@ -184,10 +184,94 @@ def parse_max_tp(list_of_files : list, repeat = 5):
                 
     return avg_results
         
+
+def parse_target_tp_vs_med_lt(list_of_files : list, repeat = 5):
+    i = 0
+    
+    if len(list_of_files) > 1:
+        raise Exception("This method only support one file")
+
+    # read every file in the folder
+    for file_path in list_of_files:
+        file_name = os.path.basename(file_path).split('.txt')[0]
+        print("parsing " + file_path)
+        with open(file_path, 'r') as f:
+            data = []
+            lines = f.readlines()
+            first_line = True
+            at_type = -1
+            for line in lines:
+                    
+                if line.startswith("Target Output TPS:"):
+                    # new run
+                    if not first_line:
+                        data.append((target_tp, get_lt, update_lt, safe_update_lt))
+                        print(f"throughput: {target_tp}, latency: {get_lt}, {update_lt}, {safe_update_lt}")
+                        i += 1
+                        if i % repeat == 0:
+                            print("---")
+                            
+                    else:
+                        first_line = False
+
+                    target_tp = line.split(':')[1].strip()
+                    target_tp = float(target_tp)
+
+                elif line.startswith("Get operations"):
+                    at_type = 0
+                elif line.startswith("Update operations"):
+                    at_type = 1
+                elif line.startswith("Safe update operations"):
+                    at_type = 2
+                elif line.startswith("Average latency:"):                        
+                    latency = line.split("Median latency:")[1].split(';')[0].strip("ms").strip()
+                    latency = float(latency)
+                    if at_type == 0:
+                        get_lt = latency
+                    elif at_type == 1:
+                        update_lt = latency
+                    elif at_type == 2:
+                        safe_update_lt = latency
+                    
+            
+            data.append((target_tp, get_lt, update_lt, safe_update_lt))
+            print(f"throughput: {target_tp}, latency: {get_lt}, {update_lt}, {safe_update_lt}")
+                    
+
+    parsed_result = { "target_tp0": [], "get": [],  "get_std": [], 
+                    "target_tp1": [], "update": [], "update_std": [], 
+                    "target_tp2": [], "safe_update": [], "safe_update_std": [] }
+    # to make it compatible with graphing script, target_tp is repeated, and stds are 0
+                      
+    for value in data:
+        parsed_result["target_tp0"].append(value[0])
+        parsed_result["target_tp1"].append(value[0])
+        parsed_result["target_tp2"].append(value[0])
+        parsed_result["get"].append(value[1])
+        parsed_result["update"].append(value[2])
+        parsed_result["safe_update"].append(value[3])
+        parsed_result["get_std"].append(0)
+        parsed_result["update_std"].append(0)
+        parsed_result["safe_update_std"].append(0)
+        
+        
+
+    # take the median of every reapt
+    final_results = {}
+    for key, value in parsed_result.items():
+        medians = []
+        for i in range(0, len(value), repeat):
+            medians.append(np.median(value[i:i+repeat]))
+        final_results[key] = medians
+
+    print(final_results)
+    return final_results
+
+                
                 
 
-folder_paths = ["./results/pnc/pnc-n4-b500-repeat5/"]
-whitelist = ["pnc-n4-7030RW-0.5.txt"]
+folder_paths = ["./results/orset/orset-n4-b500-repeat5/"]
+whitelist = ["orset-n4-7030RW-0.5.txt"]
 
 if __name__ == "__main__":
     list_of_files = get_files(folder_paths, whitelist)
