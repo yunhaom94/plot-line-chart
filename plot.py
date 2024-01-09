@@ -40,9 +40,14 @@ def plot_line_segments(csv_file, fig_file_name):
         if has_style:
             print("Style:")
             print(style)
-        if has_style:
+
             plt.plot(x_cords, y_cords, label=series_y, linestyle=style[0], marker=style[1], color=style[2])
             plt.errorbar(x_cords, y_cords, yerr=error, linestyle=style[0], marker=style[1], color=style[2], capsize=2)
+
+            # plt.yscale("log")
+            # ax = plt.gca()
+            # ax.set_ylim([0, 10000])
+
         else:
             plt.plot(x_cords, y_cords, label=series_y)
             plt.errorbar(x_cords, y_cords, yerr=error)
