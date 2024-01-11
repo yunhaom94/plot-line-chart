@@ -68,9 +68,18 @@ def plot_line_segments(csv_file, fig_file_name):
     plt.xticks(x, first_col)
     plt.legend(loc='best')
     plt.grid(True)
+    plt.yscale("log")
     #plt.gca().set_xlim(0, 6)
     #plt.gca().set_ylim(0, 10)
     #plt.show()
+
+    # plt.xlabel("Access Pattern")
+    # plt.ylabel("Throughput (ops/s)")
+    plt.legend(title="Sending Rate (ops/s)")
+    plt.xlabel("Transaction Type")
+    plt.ylabel("Latency (ms)")
+    plt.title(None)
+
     plt.savefig(fig_file_name, dpi=300)
 
 if __name__ == "__main__":

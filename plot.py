@@ -42,11 +42,8 @@ def plot_line_segments(csv_file, fig_file_name):
             print(style)
 
             plt.plot(x_cords, y_cords, label=series_y, linestyle=style[0], marker=style[1], color=style[2])
-            plt.errorbar(x_cords, y_cords, yerr=error, linestyle=style[0], marker=style[1], color=style[2], capsize=2)
+            plt.errorbar(x_cords, y_cords, yerr=error, linestyle=style[0], marker=style[1], color=style[2], capsize=2, elinewidth=0.5)
 
-            # plt.yscale("log")
-            # ax = plt.gca()
-            # ax.set_ylim([0, 10000])
 
         else:
             plt.plot(x_cords, y_cords, label=series_y)
@@ -57,12 +54,27 @@ def plot_line_segments(csv_file, fig_file_name):
         
 
     # there are more to the loc, placing it outside the chat is more complex
-    plt.legend(loc='best')
+    for l in plt.gca().lines:
+        l.set_linewidth(0.9)
+        l.set_alpha(0.7)
+           
+    plt.legend(bbox_to_anchor=(0.5, 1.16), ncol=3, loc='upper center')    
     plt.grid(True)
-    #plt.gca().set_xlim(0, 6)
-    #plt.gca().set_ylim(0, 10)
+    plt.gca().set_xlim(left=0)
+    plt.gca().set_ylim(bottom=0)
+    #plt.gca().set_ylim(bottom=800, top=1600)
+    #plt.yscale("log")
     #plt.show()
+
+    # plt.xlabel("Sending Rate (ops/s)")
+    plt.xlabel("# of Nodes")
+    #plt.ylabel("Latency (ms)")
+    plt.ylabel("Throughput (ops/s)")
+    plt.title(None)
+
+
     plt.savefig(fig_file_name, dpi=300)
+    #plt.savefig(fig_file_name, dpi=300, format="pdf", bbox_inches="tight")
 
 if __name__ == "__main__":
     # read arg 1 as csv file name if arg 2 is not given use the input as the save file name (change extension to .png)

@@ -185,6 +185,58 @@ def parse_max_tp(list_of_files : list, repeat = 5):
     return avg_results
         
 
+def parse_tp_only(list_of_files : list, repeat = 5):
+    avg_results = {}
+    data = []
+
+    i = 0
+    # read every file in the folder
+    for file_path in list_of_files:
+        file_name = os.path.basename(file_path).split('.txt')[0]
+        print("parsing " + file_path)
+        result = []
+        with open(file_path, 'r') as f:
+            data = []
+            lines = f.readlines()
+            newrun = False
+            first_line = True
+            for line in lines:
+                if line.startswith("Benchmark Results:"):
+                    # new run
+                    if newrun:
+                        raise Exception("Error: new run before previous run is finished")
+
+                    if not first_line:
+                        data.append((throughput))
+                        print(f"throughput: {throughput}")
+                        i += 1
+                        if i % repeat == 0:
+                            print("---")
+                            
+                    else:
+                        first_line = False
+
+                    newrun = True
+                elif line.startswith("Total throughput:") and newrun:
+                    throughput = line.split(':')[1].split(' ')[1].strip()
+                    throughput = float(throughput)
+                    newrun = False
+            
+            data.append(throughput)
+            print(f"throughput: {throughput}")
+                
+        for i in range(0, len(data), repeat):
+            avg_tp = np.mean([x for x in data[i:i+repeat]])
+            std_tp = np.std([x for x in data[i:i+repeat]])
+            result.append((avg_tp, std_tp))
+
+        # all throughputs 
+        avg_results[file_name] = [x[0] for x in result]
+        # all stds
+        avg_results[file_name + "-std"] = [x[1] for x in result]
+                
+    return avg_results
+
 def parse_target_tp_vs_med_lt(list_of_files : list, repeat = 5):
     i = 0
     
@@ -267,15 +319,196 @@ def parse_target_tp_vs_med_lt(list_of_files : list, repeat = 5):
     print(final_results)
     return final_results
 
+def parse_target_tp_vs_idv_avg_lt(list_of_files : list, repeat = 5):
+    i = 0
+    
+    if len(list_of_files) > 1:
+        raise Exception("This method only support one file")
+
+    # read every file in the folder
+    for file_path in list_of_files:
+        file_name = os.path.basename(file_path).split('.txt')[0]
+        print("parsing " + file_path)
+        with open(file_path, 'r') as f:
+            data = []
+            lines = f.readlines()
+            first_line = True
+            at_type = -1
+            for line in lines:
+                    
+                if line.startswith("Target Output TPS:"):
+                    # new run
+                    if not first_line:
+                        data.append((target_tp, get_lt, update, safe_update))
+                        print(f"throughput: {target_tp}, latency: {get_lt}, {update}, {safe_update}")
+                        i += 1
+                        if i % repeat == 0:
+                            print("---")
+                            
+                    else:
+                        first_line = False
+
+                    target_tp = line.split(':')[1].strip()
+                    target_tp = float(target_tp)
+
+                elif line.startswith("Get operations"):
+                    at_type = 0
+                elif line.startswith("Update operations"):
+                    at_type = 1
+                elif line.startswith("Safe update operations"):
+                    at_type = 2
+                elif line.startswith("Average latency:"):                        
+                    latency = line.split("Average latency:")[1].split(';')[0].strip("ms").strip()
+                    latency = float(latency)
+                    if at_type == 0:
+                        get_lt = latency
+                    elif at_type == 1:
+                        update = latency
+                    elif at_type == 2:
+                        safe_update = latency
+                    
+            
+            data.append((target_tp, get_lt, update, safe_update))
+            print(f"throughput: {target_tp}, latency: {get_lt}, {update}, {safe_update}")
+                    
+
+
+        
+    avg_tp = []
+    avg_get_lt = []
+    std_get_lt = []
+    avg_update_lt = []
+    std_update_lt = []
+    avg_safe_lt = []
+    std_safe_lt = []
+    # take the avg and std for every reapt
+    for i in range(0, len(data), repeat):
+        avg_tp.append(np.mean([x[0] for x in data[i:i+repeat]]))
+        avg_get_lt.append(np.mean([x[1] for x in data[i:i+repeat]]))
+        std_get_lt.append(np.std([x[1] for x in data[i:i+repeat]]))
+        avg_update_lt.append(np.mean([x[2] for x in data[i:i+repeat]]))
+        std_update_lt.append(np.std([x[2] for x in data[i:i+repeat]]))
+        avg_safe_lt.append(np.mean([x[3] for x in data[i:i+repeat]]))
+        std_safe_lt.append(np.std([x[3] for x in data[i:i+repeat]]))
+
+    final_results = {}
+    final_results["target_tp"] = avg_tp
+    final_results["get"] = avg_get_lt
+    final_results["get_std"] = std_get_lt
+    final_results["update"] = avg_update_lt
+    final_results["update_std"] = std_update_lt
+    final_results["safe"] = avg_safe_lt
+    final_results["safe_std"] = std_safe_lt
+
+    print(final_results)
+    return final_results
+
+
+
+def parse_target_tp_vs_idv_avg_lt2(list_of_files : list, repeat = 5):
+    i = 0
+    
+    if len(list_of_files) > 1:
+        raise Exception("This method only support one file")
+
+    # read every file in the folder
+    for file_path in list_of_files:
+        file_name = os.path.basename(file_path).split('.txt')[0]
+        print("parsing " + file_path)
+        with open(file_path, 'r') as f:
+            data = []
+            lines = f.readlines()
+            first_line = True
+            at_type = -1
+            for line in lines:
+                    
+                if line.startswith("Target Output TPS:"):
+                    # new run
+                    if not first_line:
+                        data.append((target_tp, get_lt, deposit_lt, transfer_lt, withdraw_lt))
+                        print(f"throughput: {target_tp}, latency: {get_lt}, {deposit_lt}, {transfer_lt}, {withdraw_lt}")
+                        i += 1
+                        if i % repeat == 0:
+                            print("---")
+                            
+                    else:
+                        first_line = False
+
+                    target_tp = line.split(':')[1].strip()
+                    target_tp = float(target_tp)
+
+                elif line.startswith("View Ops"):
+                    at_type = 0
+                elif line.startswith("Deposit Ops"):
+                    at_type = 1
+                elif line.startswith("Transfer Ops"):
+                    at_type = 2
+                elif line.startswith("Withdraw Ops:"):
+                    at_type = 3
+                elif line.startswith("Average latency:"):                        
+                    latency = line.split("Average latency:")[1].split(';')[0].strip("ms").strip()
+                    latency = float(latency)
+                    if at_type == 0:
+                        get_lt = latency
+                    elif at_type == 1:
+                        deposit_lt = latency
+                    elif at_type == 2:
+                        transfer_lt = latency
+                    elif at_type == 3:
+                        withdraw_lt = latency
+                    
+            
+            data.append((target_tp, get_lt, deposit_lt, transfer_lt, withdraw_lt))
+            print(f"throughput: {target_tp}, latency: {get_lt}, {deposit_lt}, {transfer_lt}, {withdraw_lt}")
+                    
+
+
+        
+    avg_tp = []
+    avg_get_lt = []
+    std_get_lt = []
+    avg_deposit_lt = []
+    std_deposit_lt = []
+    avg_withdraw_lt = []
+    std_withdraw_lt = []
+    avg_transfer_lt = []
+    std_transfer_lt = []
+    # take the avg and std for every reapt
+    for i in range(0, len(data), repeat):
+        avg_tp.append(np.mean([x[0] for x in data[i:i+repeat]]))
+        avg_get_lt.append(np.mean([x[1] for x in data[i:i+repeat]]))
+        std_get_lt.append(np.std([x[1] for x in data[i:i+repeat]]))
+        avg_deposit_lt.append(np.mean([x[2] for x in data[i:i+repeat]]))
+        std_deposit_lt.append(np.std([x[2] for x in data[i:i+repeat]]))
+        avg_transfer_lt.append(np.mean([x[3] for x in data[i:i+repeat]]))
+        std_transfer_lt.append(np.std([x[3] for x in data[i:i+repeat]]))
+        avg_withdraw_lt.append(np.mean([x[4] for x in data[i:i+repeat]]))
+        std_withdraw_lt.append(np.std([x[4] for x in data[i:i+repeat]]))
+
+    final_results = {}
+    final_results["target_tp"] = avg_tp
+    final_results["get"] = avg_get_lt
+    final_results["get_std"] = std_get_lt
+    final_results["deposit"] = avg_deposit_lt
+    final_results["deposit_std"] = std_deposit_lt
+    final_results["transfer"] = avg_transfer_lt
+    final_results["transfer_std"] = std_transfer_lt
+    final_results["withdraw"] = avg_withdraw_lt
+    final_results["withdraw_std"] = std_withdraw_lt
+
+    print(final_results)
+    return final_results
+
+
                 
                 
 
-folder_paths = ["./results/orset/orset-n16-b500-repeat5/"]
-whitelist = ["orset-n16-5050RW-1.txt"]
+folder_paths = ["./results\orset\orset-n4-b500-repeat5\/"]
+whitelist = ["orset-n4-5050RW-1-32c.txt"]
 
 if __name__ == "__main__":
     list_of_files = get_files(folder_paths, whitelist)
-    result_dict = parse_max_tp(list_of_files, 5)
+    result_dict = parse_tp_avg_lt(list_of_files, 5)
     output_csv(result_dict, "result.csv")
 
     
