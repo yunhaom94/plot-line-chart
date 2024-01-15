@@ -61,6 +61,7 @@ def plot_lines(csv_file, ax, left_or_right):
         ax.set_xticks([100000, 200000, 300000, 400000])
     if (left_or_right == 1):
         ax.set_title("OR-Set", y=1)
+        ax.set_ylim(top=8000)
         ax.set_xticks([40000, 80000, 120000, 160000, 200000])
 
 

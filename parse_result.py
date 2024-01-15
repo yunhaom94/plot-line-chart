@@ -499,16 +499,97 @@ def parse_target_tp_vs_idv_avg_lt2(list_of_files : list, repeat = 5):
     print(final_results)
     return final_results
 
+# Hotstuff
+def parse_tp_avg_lt2(list_of_files : list, repeat = 5):
+    ''' Parse the throughput and average latency from the result files in the folder
+     and output to a csv file '''
+    result = {}
 
+    i = 0
+    # read every file in the folder
+    for file_path in list_of_files:
+            file_name = os.path.basename(file_path).split('.txt')[0]
+            print("parsing " + file_path)
+            with open(file_path, 'r') as f:
+                data = []
+                lines = f.readlines()
+                newrun = False
+                first_line = True
+                for line in lines:
+                    if line.startswith("Benchmark Results:"):
+                        # new run
+                        if newrun:
+                            raise Exception("Error: new run before previous run is finished")
+
+                        if not first_line:
+                            data.append((throughput, latency))
+                            print(f"throughput: {throughput}, latency: {latency}")
+                            i += 1
+                            if i % repeat == 0:
+                                print("---")
+                                
+                        else:
+                            first_line = False
+
+                        newrun = True
+                    elif line.startswith("Average latency:") and newrun:                        
+                        latency = line.split(';')[0].split(':')[1].strip("ms\n")
+                        latency = float(latency)
+                    elif line.startswith("Throughput:") and newrun:
+                        throughput = line.split(':')[1].split(' ')[1].strip()
+                        throughput = float(throughput)
+                        newrun = False
+                
+                data.append((throughput, latency))
+                print(f"throughput: {throughput}, latency: {latency}")
+                    
+
+                result[file_name] = data
+                
+
+    # parse result into dict of lists
+    parsed_result = {}
+    i = 0
+    for key, value in result.items():
+        tps = []
+        lts = []
+        for item in value:
+            tps.append(item[0])
+            lts.append(item[1])
+        parsed_result[f"x{i}"] = tps
+        parsed_result[key] = lts
+        i += 1
+    
+    # output_csv(parsed_result)
+        
+    avg_results = {}
+    last_tps_std = [] 
+    
+    for key, value in parsed_result.items():
+        means = []
+        stds = []
+        
+        for i in range(0, len(value), repeat):
+            means.append(sum(value[i:i+repeat])/repeat)
+            stds.append(np.std(value[i:i+repeat]))
+
+        if key.startswith("x"): # at throughput column
+            last_tps_std = stds
+            avg_results[key] = means
+        else:
+            avg_results[key] = means
+            avg_results[key + "-ltstd"] = stds
+
+    return avg_results
                 
                 
 
-folder_paths = ["./results\orset\orset-n4-b500-repeat5\/"]
-whitelist = ["orset-n4-5050RW-1-32c.txt"]
+folder_paths = ["./results/hotstuff/"]
+whitelist = ["hostuff-b1000-msg2k.txt"]
 
 if __name__ == "__main__":
     list_of_files = get_files(folder_paths, whitelist)
-    result_dict = parse_tp_avg_lt(list_of_files, 5)
+    result_dict = parse_tp_avg_lt2(list_of_files, 5)
     output_csv(result_dict, "result.csv")
 
     
