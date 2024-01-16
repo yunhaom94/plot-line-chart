@@ -1,4 +1,6 @@
 import sys
+import matplotlib
+from matplotlib.ticker import StrMethodFormatter
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -58,9 +60,26 @@ def plot_lines(csv_file, ax, row, column):
         ax.set_ylabel("Throughput (ops/s)", fontsize=13)
         ax.set_yticks([80000, 160000, 240000])
         legend = ax.legend(bbox_to_anchor=(1.05, 1.3), ncol=2, loc='upper center') 
+        ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
     elif (row == 0 and column == 1):
         ax.set_title("OR-Set", y=1, size=15)
         ax.set_yticks([30000, 60000, 90000])
+
+        class OOMFormatter(matplotlib.ticker.ScalarFormatter):
+            def __init__(self, order=0, fformat="%1.1f", offset=True, mathText=True):
+                self.oom = order
+                self.fformat = fformat
+                matplotlib.ticker.ScalarFormatter.__init__(self,useOffset=offset,useMathText=mathText)
+            def _set_order_of_magnitude(self):
+                self.orderOfMagnitude = self.oom
+            def _set_format(self, vmin=None, vmax=None):
+                self.format = self.fformat
+                if self._useMathText:
+                    self.format = r'$\mathdefault{%s}$' % self.format
+
+        ax.yaxis.set_major_formatter(OOMFormatter(5, "%1.1f"))
+
+        ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
     elif (row == 1 and column == 0):
         ax.set_ylabel("Latency (ms)", fontsize=13)
         ax.set_yticks([1000, 1200, 1400])
@@ -95,4 +114,7 @@ if __name__ == "__main__":
     plot_lines(csv_file2, axs[0][1], 0, 1)
     plot_lines(csv_file3, axs[1][0], 1, 0)
     plot_lines(csv_file4, axs[1][1], 1, 1)
+    
+
+    plt.subplots_adjust(wspace=0, hspace=0.1)
     fig.savefig(fig_file_name, dpi=300, format="pdf", bbox_inches="tight")

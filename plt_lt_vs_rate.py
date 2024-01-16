@@ -64,7 +64,7 @@ def plot_lines(csv_file, ax, left_or_right):
         ax.set_xticks([40000, 80000, 120000])
 
     
-         
+    ax.ticklabel_format(style='scientific', axis='x', scilimits=(0,0), useMathText=True)
 
 
 if __name__ == "__main__":
@@ -79,4 +79,6 @@ if __name__ == "__main__":
 
     plot_lines(csv_file1, axs[0], 0)
     plot_lines(csv_file2, axs[1], 1)
+
+    plt.subplots_adjust(wspace=0.15, hspace=0)
     fig.savefig(fig_file_name, dpi=300, format="pdf", bbox_inches="tight")

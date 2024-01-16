@@ -59,6 +59,8 @@ def plot_lines(csv_file, ax):
     ax.set_xticks([0, 100000, 200000, 300000])
     ax.set_yticks([0, 100000, 200000, 300000])
 
+    ax.ticklabel_format(style='scientific', scilimits=(0,0), useMathText=True)
+
 if __name__ == "__main__":
     csv_file1 = "results/bank_tp_send_rate.csv"
     fig_file_name = "results/bank_tp_send_rate.pdf"

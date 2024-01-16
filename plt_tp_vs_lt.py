@@ -1,4 +1,5 @@
 import sys
+from matplotlib.ticker import ScalarFormatter
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -64,6 +65,14 @@ def plot_lines(csv_file, ax, left_or_right):
         ax.set_ylim(top=8000)
         ax.set_xticks([40000, 80000, 120000, 160000, 200000])
 
+    ax.ticklabel_format(style='scientific', axis='x', scilimits=(0,0), useMathText=True)
+
+
+
+
+# Apply the custom formatter to the x-axis
+
+
 
 if __name__ == "__main__":
     csv_file1 = "results/pnc_tp_vs_lt.csv"
@@ -74,4 +83,6 @@ if __name__ == "__main__":
 
     plot_lines(csv_file1, axs[0], 0)
     plot_lines(csv_file2, axs[1], 1)
+
+    plt.subplots_adjust(wspace=0.15, hspace=0)
     fig.savefig(fig_file_name, dpi=300, format="pdf", bbox_inches="tight")

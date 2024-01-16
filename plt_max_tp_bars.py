@@ -83,6 +83,7 @@ def plot_bars(csv_file, ax, left_or_right):
 
 
     ax.set_xlabel("Access Pattern", fontsize=13)
+    ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
     
     
 if __name__ == "__main__":
@@ -100,5 +101,5 @@ if __name__ == "__main__":
     plot_bars(csv_file2, axs[1], 1)
 
 
-
+    plt.subplots_adjust(wspace=0.15, hspace=0.1)
     fig.savefig(fig_file_name, dpi=300, format="pdf", bbox_inches="tight")

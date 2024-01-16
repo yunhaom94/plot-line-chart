@@ -65,7 +65,7 @@ def plot_bars(csv_file, axs):
     axs.grid(True)
     axs.set_yscale("log")
     axs.set_box_aspect(1)
-    axs.legend(title="Sending Rate (TPS)")
+    axs.legend(title="Sending Rate (TPS) \n                      x10\u2075")
     axs.set_xlabel("Transaction Type", fontsize=13)
     axs.set_ylabel("Latency (ms)", fontsize=13)
     axs.set_title(None)

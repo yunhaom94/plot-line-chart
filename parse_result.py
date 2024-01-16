@@ -585,7 +585,7 @@ def parse_tp_avg_lt2(list_of_files : list, repeat = 5):
                 
 
 folder_paths = ["./results/hotstuff/"]
-whitelist = ["hostuff-b1000-msg2k.txt"]
+whitelist = ["hostuff-b500-msg2k.txt"]
 
 if __name__ == "__main__":
     list_of_files = get_files(folder_paths, whitelist)
