@@ -55,12 +55,12 @@ def plot_lines(csv_file, ax, left_or_right):
     ax.set_yscale("log")
 
     if (left_or_right == 0):
-        legend = ax.legend(bbox_to_anchor=(1.05, 1.3), ncol=3, loc='upper center') 
+        legend = ax.legend(bbox_to_anchor=(1.05, 1.4), ncol=3, loc='upper center') 
         ax.set_ylabel("Latency (ms)", fontsize=13)
-        ax.set_title("PN-Counter", y=1, size=15)
+        ax.set_title("PN-Counter", y=-0.25, size=15)
         ax.set_xticks([100000, 200000, 300000])
     elif (left_or_right == 1):
-        ax.set_title("OR-Set", y=1, size=15)
+        ax.set_title("OR-Set", y=-0.25, size=15)
         ax.set_xticks([40000, 80000, 120000])
 
     
