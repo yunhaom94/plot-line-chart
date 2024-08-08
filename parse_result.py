@@ -217,7 +217,7 @@ def parse_tp_only(list_of_files : list, repeat = 5):
                         first_line = False
 
                     newrun = True
-                elif line.startswith("Total throughput:") and newrun:
+                elif line.startswith("Throughput:") and newrun:
                     throughput = line.split(':')[1].split(' ')[1].strip()
                     throughput = float(throughput)
                     newrun = False
@@ -676,11 +676,11 @@ def parse_tp_avg_lt2(list_of_files : list, repeat = 5):
                 
 
 folder_paths = ["./results/orset/orset-n4-b500-repeat5/"]
-whitelist = ["orset-n4-5050RW-0.5.txt"]
+whitelist = ["orset-n4-5050RW-1-objs.txt"]
 
 if __name__ == "__main__":
     list_of_files = get_files(folder_paths, whitelist)
-    result_dict = parse_target_tp_vs_percentile_lt(list_of_files, 95, 5)
+    result_dict = parse_tp_only(list_of_files, 5)
     output_csv(result_dict, "result.csv")
 
     
