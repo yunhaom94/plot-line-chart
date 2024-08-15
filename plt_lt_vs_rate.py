@@ -48,19 +48,19 @@ def plot_lines(csv_file, ax, left_or_right):
 
 
     ax.grid(True)
-    ax.set_box_aspect(1)
+    #ax.set_box_aspect(1)
     ax.set_xlim(left=0)
     ax.set_xlabel("Sending Rate (ops/s)", fontsize=13)
     #ax.set_ylim(bottom=0)
     ax.set_yscale("log")
 
     if (left_or_right == 0):
-        legend = ax.legend(bbox_to_anchor=(1.05, 1.4), ncol=3, loc='upper center') 
+        legend = ax.legend(bbox_to_anchor=(1.05, 1.8), ncol=3, loc='upper center', columnspacing=0.8, fontsize=13) 
         ax.set_ylabel("Latency (ms)", fontsize=13)
-        ax.set_title("PN-Counter", y=-0.25, size=15)
+        ax.set_title("PN-Counter", y=1.01, size=15)
         ax.set_xticks([100000, 200000, 300000])
     elif (left_or_right == 1):
-        ax.set_title("OR-Set", y=-0.25, size=15)
+        ax.set_title("OR-Set", y=1.01, size=15)
         ax.set_xticks([40000, 80000, 120000])
 
     
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     csv_file2 = "results/orset_tar_tp_vs_med_lt.csv"
     fig_file_name = "results/lt_vs_rate.pdf"
 
-    fig, axs  = plt.subplots(1, 2, figsize=(9, 5))
+    fig, axs  = plt.subplots(1, 2, figsize=(8.3, 2.1))
 
     plt.rc('legend', fontsize=13)    # legend fontsize
     plt.rc('figure', titlesize=20)  # fontsize of the figure title

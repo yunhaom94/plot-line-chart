@@ -48,7 +48,6 @@ def plot_lines(csv_file, ax):
 
 
     ax.grid(True)
-    ax.set_box_aspect(1)
     ax.set_ylim(bottom=0)
     ax.set_xlim(left=0)
     
@@ -65,7 +64,7 @@ if __name__ == "__main__":
     csv_file1 = "results/bank_tp_send_rate.csv"
     fig_file_name = "results/bank_tp_send_rate.pdf"
 
-    fig, axs  = plt.subplots(1, 1, figsize=(4.5, 4.5))
+    fig, axs  = plt.subplots(1, 1, figsize=(4, 3.5))
     plt.rc('legend', fontsize=13)    # legend fontsize
     plt.rcParams['legend.title_fontsize'] = 13
 

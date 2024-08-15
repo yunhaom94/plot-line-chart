@@ -1,6 +1,9 @@
 import os
 import sys
 import csv
+import win32com.client
+import subprocess
+import time
 
 import numpy as np
 
@@ -157,9 +160,12 @@ def parse_max_tp(list_of_files : list, repeat = 5):
 
                     newrun = True
                 elif line.startswith("Average latency:") and newrun:                        
-                    latency = line.split(';')[0].split(':')[1].strip("ms").strip()
+                    latency = line.split(';')[0].split(':')[1].strip().strip("ms").strip()
                     latency = float(latency)
-                    latency_std = line.split('Stdv latency:')[1].strip("ms").strip()
+                    if (line.count("Stdv latency:") > 0):
+                        latency_std = line.split('Stdv latency:')[1].strip("ms").strip()
+                    else:
+                        latency_std = 0
                 elif line.startswith("Throughput:") and newrun:
                     throughput = line.split(':')[1].split(' ')[1].strip()
                     throughput = float(throughput)
@@ -675,12 +681,29 @@ def parse_tp_avg_lt2(list_of_files : list, repeat = 5):
                 
                 
 
-folder_paths = ["./results/orset/orset-n4-b500-repeat5/"]
-whitelist = ["orset-n4-5050RW-1-objs.txt"]
+
+def close_result_csv():
+    try:
+        # Try to connect to any running Excel instance
+        excel_instances = win32com.client.GetObject(None, "Excel.Application")
+        for workbook in excel_instances.Workbooks:
+            if "result.csv" in workbook.FullName:
+                print(f"Closing workbook {workbook.FullName}")
+                workbook.Close(SaveChanges=False)
+    except Exception as e:
+        print("No running Excel instance found with 'result.csv' open.")
+
+folder_paths = ["./results/hotstuff/n8/"]
+whitelist = ["hostuff-b500-msg380-0-cr-fault.txt"]
 
 if __name__ == "__main__":
     list_of_files = get_files(folder_paths, whitelist)
-    result_dict = parse_tp_only(list_of_files, 5)
+    result_dict = parse_tp_avg_lt2(list_of_files, 5)
+    close_result_csv()
     output_csv(result_dict, "result.csv")
+    subprocess.Popen(['start', 'excel', 'result.csv'], shell=True)
+
+    
+
 
     

@@ -51,20 +51,20 @@ def plot_lines(csv_file, ax):
     ax.set_ylim(bottom=0)
     ax.set_xlim(left=0)
     
-    ax.set_ylabel("Throughput (TPS)", fontsize=13)
+    ax.set_ylabel("Throughput (ops/s)", fontsize=13)
     ax.set_xlabel("Number of Objects", fontsize=13)
 
-    ax.set_xticks([0, 2000, 4000])
-    ax.set_yticks([0, 100000, 200000, 300000, 350000])
+    ax.set_xticks([0, 1000, 2000, 3000, 4000, 5000])
+    ax.set_yticks([0, 80000, 160000, 240000])
 
-    ax.ticklabel_format(style='scientific', scilimits=(0,0), useMathText=True)
-    legend = ax.legend(bbox_to_anchor=(0.78, 1.02), ncol=1, loc='upper center') 
+    ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
+    legend = ax.legend(bbox_to_anchor=(1.4, 1), ncol=1, loc='upper center', fontsize=13, columnspacing=0.5) 
 
 if __name__ == "__main__":
     csv_file1 = "results/max_tp_vs_obj.csv"
     fig_file_name = "results/max_tp_vs_obj.pdf"
 
-    fig, axs  = plt.subplots(1, 1, figsize=(8, 4.5))
+    fig, axs  = plt.subplots(1, 1, figsize=(4.5, 2.5))
     plt.rc('legend', fontsize=13)    # legend fontsize
     plt.rcParams['legend.title_fontsize'] = 13
 

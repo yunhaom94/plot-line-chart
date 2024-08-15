@@ -50,7 +50,7 @@ def plot_lines(csv_file, ax, row, column):
 
 
     ax.grid(True)
-    ax.set_box_aspect(1)
+    #ax.set_box_aspect(1)
     #ax.set_xlim(left=0)
     
     #ax.set_ylim(bottom=0)
@@ -59,8 +59,11 @@ def plot_lines(csv_file, ax, row, column):
         ax.set_title("PN-Counter", y=1, size=15)
         ax.set_ylabel("Throughput (ops/s)", fontsize=13)
         ax.set_yticks([80000, 160000, 240000])
-        legend = ax.legend(bbox_to_anchor=(1.05, 1.3), ncol=2, loc='upper center') 
+        legend = ax.legend(bbox_to_anchor=(1.05, 1.45), ncol=3, loc='upper center') 
         ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
+        ax.set_xticklabels([])
+
+        
     elif (row == 0 and column == 1):
         ax.set_title("OR-Set", y=1, size=15)
         ax.set_yticks([30000, 60000, 90000])
@@ -77,25 +80,33 @@ def plot_lines(csv_file, ax, row, column):
                 if self._useMathText:
                     self.format = r'$\mathdefault{%s}$' % self.format
 
-        ax.yaxis.set_major_formatter(OOMFormatter(5, "%1.1f"))
-
+        ax.yaxis.set_major_formatter(OOMFormatter(4, "%1.1f"))
         ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
+        ax.set_xticklabels([])
+
+
     elif (row == 1 and column == 0):
         ax.set_ylabel("Latency (ms)", fontsize=13)
-        ax.set_yticks([1000, 1200, 1400])
-    elif (row == 1 and column == 1):
-        ax.set_yticks([1000, 1200, 1400])
+        ax.set_yticks([500, 1000, 1500])
+        ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
 
-    ax.set_xlabel("Number of nodes", fontsize=13)
+        ax.set_xlabel("Number of Nodes", fontsize=13)
+
+
+
+    elif (row == 1 and column == 1):
+        ax.set_yticks([500, 1000, 1500])
+        ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
+        ax.yaxis.get_offset_text().set_position((0,0))
+
+
+        ax.set_xlabel("Number of Nodes", fontsize=13)
+
+
+    t = ax.yaxis.get_offset_text()
+    t.set_x(-0.13)
     ax.set_xticks([4, 8, 12, 16])
 
-
-        # ax.set_title("OR Set", y=1)
-        # #ax.set_xticks([40000, 80000, 120000])
-        # #
-        
-        # ax.set_title("PN Counter", y=1)
-        # #ax.set_xticks([100000, 200000, 300000])
 
 if __name__ == "__main__":
     csv_file1 = "results/pnc_max_tp_scale.csv"
@@ -105,7 +116,9 @@ if __name__ == "__main__":
     
     fig_file_name = "results/scale.pdf"
 
-    fig, axs  = plt.subplots(2, 2, figsize=(8, 7))
+    fig, axs  = plt.subplots(2, 2, figsize=(8.3, 4.5))
+    plt.subplots_adjust(wspace=10, hspace=10)
+
 
     plt.rc('legend', fontsize=13)    # legend fontsize
     plt.rc('figure', titlesize=20)  # fontsize of the figure title
@@ -116,5 +129,5 @@ if __name__ == "__main__":
     plot_lines(csv_file4, axs[1][1], 1, 1)
     
 
-    plt.subplots_adjust(wspace=0, hspace=0.1)
+    plt.subplots_adjust(wspace=0.15, hspace=0.1)
     fig.savefig(fig_file_name, dpi=300, format="pdf", bbox_inches="tight")

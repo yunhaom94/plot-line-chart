@@ -64,7 +64,6 @@ def plot_bars(csv_file, axs):
     axs.set_xticks(x, first_col)
     axs.grid(True)
     axs.set_yscale("log")
-    axs.set_box_aspect(1)
     axs.legend(title="Sending Rate (TPS) \n                      x10\u2075")
     axs.set_xlabel("Transaction Type", fontsize=13)
     axs.set_ylabel("Latency (ms)", fontsize=13)
@@ -75,7 +74,7 @@ if __name__ == "__main__":
     csv_file1 = "results/bank_lt_vs_type.csv"
     fig_file_name = "results/bank_lt_vs_type.pdf"
     
-    fig, axs  = plt.subplots(1, 1, figsize=(4.5, 4.5))
+    fig, axs  = plt.subplots(1, 1, figsize=(4.2, 3.5))
     plt.rc('legend', fontsize=13)    # legend fontsize
     plt.rcParams['legend.title_fontsize'] = 13
 
