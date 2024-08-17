@@ -61,7 +61,7 @@ def plot_bars(csv_file, ax, left_or_right):
         i += 1
 
 
-    ax.set_box_aspect(1)
+    #ax.set_box_aspect(1)
 
     # there are more to the loc, placing it outside the chat is more complex
     ax.set_xticks(x, first_col, fontsize=12)
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     csv_file2 = "results/orset_max_tp.csv"
     fig_file_name = "results/max_tp.pdf"
 
-    fig, axs  = plt.subplots(1, 2, figsize=(9, 5))
+    fig, axs  = plt.subplots(1, 2, figsize=(8.3, 4))
 
 
     plt.rc('legend', fontsize=13)    # legend fontsize
