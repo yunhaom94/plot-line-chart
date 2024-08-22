@@ -2,6 +2,7 @@ import sys
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import PercentFormatter
 
 def plot_lines(csv_file, ax):
     df = pd.read_csv(csv_file)
@@ -23,24 +24,22 @@ def plot_lines(csv_file, ax):
         if len(y_cords) != len(x_cords):
             y_cords = df[series_y].dropna().tolist()
             has_style = 0
-        print("X:")
-        print(x_cords)
-        print("Y:")
-        print(y_cords)
-        print("Error:")
-        print(error)
+        # print("X:")
+        # print(x_cords)
+        # print("Y:")
+        # print(y_cords)
+        # print("Error:")
+        # print(error)
         
-
         if has_style:
             print("Style:")
             print(style)
 
-            ax.plot(x_cords, y_cords, label=series_y, linestyle=style[0], marker=style[1], color=style[2])
-            ax.errorbar(x_cords, y_cords, yerr=error, linestyle=style[0], marker=style[1], color=style[2], capsize=2, elinewidth=0.5)
+            ax.plot(x_cords, y_cords, label=series_y, linestyle=style[0], color=style[2])
 
         else:
             raise Exception("No style provided")
-        # set aspect ratio
+
     
     for l in ax.lines:
         l.set_linewidth(0.9)
@@ -48,21 +47,22 @@ def plot_lines(csv_file, ax):
 
 
     ax.grid(True)
-    ax.set_ylim(bottom=0)
-    ax.set_xlim(left=0)
+    ax.set_xlim(left=0, right=500)
     
-    ax.set_ylabel("Throughput (ops/s)", fontsize=13)
-    ax.set_xlabel("Number of Objects", fontsize=13)
+    ax.set_ylabel("Latency (ms)", fontsize=13)
+    ax.set_xlabel("% of Elapsed Time", fontsize=13)
 
-    ax.set_xticks([0, 1000, 2000, 3000, 4000, 5000])
-    ax.set_yticks([0, 80000, 160000, 240000])
+    
+    ax.set_yscale('log')
 
-    ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
-    legend = ax.legend(bbox_to_anchor=(0.55, 1.5), ncol=1, loc='upper center', fontsize=13, columnspacing=0.5) 
+    #ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
+    legend = ax.legend(bbox_to_anchor=(0.55, 1.38), ncol=1, loc='upper center', fontsize=13, columnspacing=0.5) 
+    ax.xaxis.set_major_formatter(PercentFormatter(xmax=500))
 
+  
 if __name__ == "__main__":
-    csv_file1 = "results/max_tp_vs_obj.csv"
-    fig_file_name = "results/max_tp_vs_obj.pdf"
+    csv_file1 = "results/ts.csv"
+    fig_file_name = "results/ts.pdf"
 
     fig, axs  = plt.subplots(1, 1, figsize=(4, 3.5))
     plt.rc('legend', fontsize=13)    # legend fontsize

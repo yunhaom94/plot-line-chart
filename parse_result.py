@@ -680,8 +680,46 @@ def parse_tp_avg_lt2(list_of_files : list, repeat = 5):
     return avg_results
                 
                 
+def parse_time_series(list_of_files : list, repeat = 5):
+    if len(list_of_files) > 1:
+        raise Exception("This method only support one file")
 
+    file = list_of_files[0]
+    print("parsing " + file)
+    with open(file, 'r') as f:
+        data = []
+        lines = f.readlines()
+        for line in lines:
+            s = line.strip().split(',')
+            # remove empty string
+            s = list(filter(None, s))
+            # strip \"
+            s = [x.strip("\"") for x in s]
+            s = [float(x) for x in s]
+            for d in s:
+                data.append(d)
+            
+    
+    # do a moving average on data
+    # data = np.convolve(data, np.ones((10,))/10, mode='valid')
+    
+    result = {} 
+    result["0"] = []
+    result["1"] = []
+    result["2"] = []
+    # sum the ith elements of each sub list of data, the sub list may not be the same length, but always start with 0
+    i = 0
+    go_on = True
+    for d in data:
 
+        result["0"].append(i)
+        result["1"].append(d)
+        result["2"].append(0)
+        i += 1
+    
+    return result
+
+        
 def close_result_csv():
     try:
         # Try to connect to any running Excel instance
@@ -693,12 +731,12 @@ def close_result_csv():
     except Exception as e:
         print("No running Excel instance found with 'result.csv' open.")
 
-folder_paths = ["./results/hotstuff/n8/"]
-whitelist = ["hostuff-b500-msg380-0-cr-fault.txt"]
+folder_paths = ["./results/ts/"]
+whitelist = ["orset_grow_n4_lt_ts.txt"]
 
 if __name__ == "__main__":
     list_of_files = get_files(folder_paths, whitelist)
-    result_dict = parse_tp_avg_lt2(list_of_files, 5)
+    result_dict = parse_time_series(list_of_files, 5)
     close_result_csv()
     output_csv(result_dict, "result.csv")
     subprocess.Popen(['start', 'excel', 'result.csv'], shell=True)

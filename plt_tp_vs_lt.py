@@ -57,12 +57,12 @@ def plot_lines(csv_file, ax, left_or_right):
     if (left_or_right == 0):
         legend = ax.legend(bbox_to_anchor=(1.05, 1.42), ncol=5, loc='upper center', fontsize=10) 
         ax.set_ylabel("Latency (ms)", fontsize=9)
-        ax.set_title("PN-Counter", y=1, size=11)
+        ax.set_title("PN-Counter", y=1, size=9)
 
         ax.set_xticks([100000, 200000, 300000, 400000])
 
     if (left_or_right == 1):
-        ax.set_title("OR-Set", y=1, size=11)
+        ax.set_title("OR-Set", y=1, size=9)
         ax.set_ylim(top=8000)
         ax.set_xticks([40000, 80000, 120000, 160000, 200000])
 
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     csv_file2 = "results/orset_tp_vs_lt.csv"
     fig_file_name = "results/tp_vs_lt.pdf"
 
-    fig, axs  = plt.subplots(1, 2, figsize=(12, 2.5))
+    fig, axs  = plt.subplots(1, 2, figsize=(12, 2.2))
 
     plot_lines(csv_file1, axs[0], 0)
     plot_lines(csv_file2, axs[1], 1)
