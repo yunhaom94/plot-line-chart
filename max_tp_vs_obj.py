@@ -58,13 +58,13 @@ def plot_lines(csv_file, ax):
     ax.set_yticks([0, 80000, 160000, 240000])
 
     ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
-    legend = ax.legend(bbox_to_anchor=(0.55, 1.5), ncol=1, loc='upper center', fontsize=13, columnspacing=0.5) 
+    legend = ax.legend(bbox_to_anchor=(0.55, 1.55), ncol=1, loc='upper center', fontsize=13, columnspacing=0.5) 
 
 if __name__ == "__main__":
     csv_file1 = "results/max_tp_vs_obj.csv"
     fig_file_name = "results/max_tp_vs_obj.pdf"
 
-    fig, axs  = plt.subplots(1, 1, figsize=(4, 3.5))
+    fig, axs  = plt.subplots(1, 1, figsize=(4, 3))
     plt.rc('legend', fontsize=13)    # legend fontsize
     plt.rcParams['legend.title_fontsize'] = 13
 

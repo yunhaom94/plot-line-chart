@@ -91,7 +91,7 @@ if __name__ == "__main__":
     csv_file2 = "results/orset_max_tp.csv"
     fig_file_name = "results/max_tp.pdf"
 
-    fig, axs  = plt.subplots(1, 2, figsize=(8.3, 4))
+    fig, axs  = plt.subplots(1, 2, figsize=(8.3, 3))
 
 
     plt.rc('legend', fontsize=13)    # legend fontsize

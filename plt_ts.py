@@ -56,7 +56,7 @@ def plot_lines(csv_file, ax):
     ax.set_yscale('log')
 
     #ax.ticklabel_format(style='scientific', axis='y', scilimits=(0,0), useMathText=True)
-    legend = ax.legend(bbox_to_anchor=(0.55, 1.38), ncol=1, loc='upper center', fontsize=13, columnspacing=0.5) 
+    legend = ax.legend(bbox_to_anchor=(0.5, 1.55), ncol=1, loc='upper center', fontsize=13, columnspacing=0.5) 
     ax.xaxis.set_major_formatter(PercentFormatter(xmax=500))
 
   
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     csv_file1 = "results/ts.csv"
     fig_file_name = "results/ts.pdf"
 
-    fig, axs  = plt.subplots(1, 1, figsize=(4, 3.5))
+    fig, axs  = plt.subplots(1, 1, figsize=(4, 3))
     plt.rc('legend', fontsize=13)    # legend fontsize
     plt.rcParams['legend.title_fontsize'] = 13
 

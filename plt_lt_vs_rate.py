@@ -1,3 +1,4 @@
+import itertools
 import sys
 
 import pandas as pd
@@ -55,7 +56,7 @@ def plot_lines(csv_file, ax, left_or_right):
     ax.set_yscale("log")
 
     if (left_or_right == 0):
-        legend = ax.legend(bbox_to_anchor=(1.05, 1.8), ncol=3, loc='upper center', columnspacing=0.8, fontsize=13) 
+        #legend = ax.legend(bbox_to_anchor=(1.05, 1.8), loc='upper center', columnspacing=0.8, fontsize=13) 
         ax.set_ylabel("Latency (ms)", fontsize=13)
         ax.set_title("PN-Counter", y=1.01, size=15)
         ax.set_xticks([100000, 200000, 300000])
@@ -66,19 +67,29 @@ def plot_lines(csv_file, ax, left_or_right):
     
     ax.ticklabel_format(style='scientific', axis='x', scilimits=(0,0), useMathText=True)
 
+def flip(items, ncol):
+    return itertools.chain(*[items[i::ncol] for i in range(ncol)])
+
+def remove_suffixes(labels):
+    """Remove suffixes like .1, .2 from labels."""
+    return [label.split('.')[0] for label in labels]
 
 if __name__ == "__main__":
     csv_file1 = "results/pnc_tar_tp_vs_med_lt.csv"
     csv_file2 = "results/orset_tar_tp_vs_med_lt.csv"
     fig_file_name = "results/lt_vs_rate.pdf"
 
-    fig, axs  = plt.subplots(1, 2, figsize=(8.3, 2.1))
+    fig, axs  = plt.subplots(1, 2, figsize=(8.3, 3))
 
     plt.rc('legend', fontsize=13)    # legend fontsize
     plt.rc('figure', titlesize=20)  # fontsize of the figure title
 
     plot_lines(csv_file1, axs[0], 0)
     plot_lines(csv_file2, axs[1], 1)
+
+    handles, labels = axs[0].get_legend_handles_labels()
+    labels = remove_suffixes(labels)
+    axs[0].legend(flip(handles, 4), flip(labels, 4), ncol=4, bbox_to_anchor=(1.05, 1.55), loc='upper center', columnspacing=0.8, fontsize=13)
 
     plt.subplots_adjust(wspace=0.15, hspace=0)
     fig.savefig(fig_file_name, dpi=300, format="pdf", bbox_inches="tight")
